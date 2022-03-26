@@ -7,7 +7,6 @@ import reminder
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 
-
 bot = commands.Bot(command_prefix='', self_bot=True)
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
