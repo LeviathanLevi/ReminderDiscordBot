@@ -1,38 +1,41 @@
 import os
 import asyncio
 import discord
+import datetime
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 
-client = commands.Bot(command_prefix='', self_bot=True)
+bot = commands.Bot(command_prefix='', self_bot=True)
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-TARGET_USER_ID = os.getenv('USER_TARGET_ID')
 
-
-
-@client.event
+@bot.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+    print('We have logged in as {0.user}'.format(bot))
 
-@client.event
+@bot.event
 async def on_message(message):
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
 
 async def getUser(TARGET_USER_ID):
-    await client.wait_until_ready()
+    await bot.wait_until_ready()
     user = None
     if user == None:
-        user = await client.fetch_user(TARGET_USER_ID)
+        user = await bot.fetch_user(TARGET_USER_ID)
         print('Target User:',user)
 
     return
 
+async def startBot():
+    TARGET_USER_ID = os.getenv('USER_TARGET_ID')
+    await getUser(TARGET_USER_ID)
+    print("here")
 
-client.loop.create_task(getUser(TARGET_USER_ID))
+@tasks.loop(minutes=1)
+async def updateReminders():
+    timestamp = datetime.datetime.now().day
+    
+bot.loop.create_task(startBot())
 
-client.run(TOKEN)
-
-#await user.send("Hello")
-#print('message sent')
+bot.run(TOKEN)
